@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b43">
+<title>SAPA ASET DP3A</title>
+<style>
+:root{--green:#176b43;--green2:#278454;--ink:#20352b;--muted:#637568;--line:#d4e2d7;--bg:#f3f7f4;--pale:#e8f3eb}
+*{box-sizing:border-box}
+body{margin:0 auto;max-width:680px;padding:0 16px 36px;background:var(--bg);color:var(--ink);font:14px/1.5 Arial,sans-serif}
+header{margin:0 -16px 20px;padding:25px 18px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#145c3b,#278454);border-radius:0 0 18px 18px}
+h1{font-size:24px;letter-spacing:.3px;margin:0 0 3px}.byline{font-size:12px;color:#e3f3e9;margin:0}
+.intro{background:#e2f2e7;border-left:4px solid var(--green2);padding:12px 14px;border-radius:8px;margin-bottom:18px}
+.section{background:#fff;border:1px solid #e0e9e2;border-radius:15px;padding:16px;margin:14px 0;box-shadow:0 2px 8px #183b2808}
+.section-title{font-size:15px;font-weight:700;color:#234d37;margin:0 0 10px}
+label,.label{display:block;font-size:13px;font-weight:700;color:#234d37;margin:14px 0 7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cedbd1;border-radius:10px;background:#fff;color:var(--ink);font:14px Arial,sans-serif}
+input:focus,select:focus,textarea:focus{outline:2px solid #27845435;border-color:var(--green2)}
+button{cursor:pointer;border:1px solid #c8d9cd;border-radius:10px;padding:11px 14px;background:#fff;color:#24583a;font-weight:700;font-size:14px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:var(--green);border-color:var(--green);color:#fff}
+.camera-box{min-height:145px;border:2px dashed #9bbca6;border-radius:14px;background:var(--pale);color:#236443;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:16px}
+.camera-icon{font-size:38px}.camera-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin-top:9px;background:#15251b}
+#preview{display:none}.hidden{display:none!important}.muted{font-size:12px;color:var(--muted)}
+.results{display:grid;gap:7px;margin-top:8px}.asset-card{border:1px solid var(--line);border-radius:9px;padding:11px;background:white;cursor:pointer}.asset-card:hover,.asset-card.chosen{background:#eaf5ed;border-color:var(--green2)}
+.choices{display:flex;flex-wrap:wrap;gap:8px}.choices button.active{background:var(--green);border-color:var(--green);color:#fff}
+.rooms button{flex:1 0 22%;padding:10px 6px;font-size:12px}
+.info{background:#f8fbf8;border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px;line-height:1.9;overflow-wrap:anywhere}
+.save{width:100%;min-height:49px;font-size:15px;margin-top:8px}
+.status{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px;padding:11px;border-radius:9px;background:#edf4ef;color:#234d37}
+.status.error{background:#fff0ed;color:#9c2e20}.status.success{background:#e2f5e8;color:#145c3b}
+@media(max-width:400px){body{padding-left:12px;padding-right:12px}header{margin-left:-12px;margin-right:-12px}.rooms button{flex-basis:27%}}
+</style>
+</head>
+<body>
+<header><h1>SAPA ASET DP3A</h1><p class="byline"><i>By: @RK.Mila 2026</i></p></header>
+<div class="intro">Silakan masukkan data inventarisasi aset. Foto dapat diambil langsung melalui kamera atau dipilih dari galeri.</div>
+
+<div class="section">
+  <div class="section-title">1. Dokumentasi Aset</div>
+  <div class="camera-box" id="cameraBox"><span class="camera-icon">▣</span><b>Kamera belum dibuka</b><span class="muted">Tekan Buka Kamera untuk mengambil foto aset</span></div>
+  <video id="video" class="hidden" autoplay playsinline></video>
+  <img id="preview" alt="Pratinjau foto aset">
+  <canvas id="canvas" class="hidden"></canvas>
+  <div class="camera-actions">
+    <button type="button" class="primary" id="openCamera">Buka Kamera</button>
+    <button type="button" class="primary hidden" id="takePhoto">Ambil Foto</button>
+    <button type="button" class="hidden" id="retakePhoto">Ulangi Foto</button>
+    <button type="button" id="uploadPhoto">Pilih dari Galeri</button>
+    <input type="file" id="filePhoto" accept="image/*" capture="environment" class="hidden">
+  </div>
+  <p class="muted">Kamera memerlukan izin browser dan halaman HTTPS.</p>
+</div>
+
+<div class="section">
+  <div class="section-title">2. Pilih Data Aset</div>
+  <label for="searchName">Nama Barang</label>
+  <input id="searchName" placeholder="Cari nama barang..." autocomplete="off">
+  <div id="nameResults" class="results"></div>
+  <label for="yearSelect">Tahun Perolehan</label>
+  <select id="yearSelect" disabled><option value="">Pilih Tahun</option></select>
+  <label for="assetSelect">NIBAR – Spesifikasi &amp; Tipe – Nilai Perolehan</label>
+  <select id="assetSelect" disabled><option value="">Pilih data aset</option></select>
+  <div id="assetInfo" class="info hidden"></div>
+  <p class="muted" id="masterNotice">Data master belum terhubung. Setelah endpoint Apps Script disiapkan, pencarian akan memakai data spreadsheet asli.</p>
+</div>
+
+<div class="section">
+  <div class="section-title">3. Kondisi dan Lokasi</div>
+  <label>Pilih Kondisi</label>
+  <div class="muted" style="margin-bottom:8px">B = Baik, R = Rusak, RB = Rusak Berat</div>
+  <div class="choices" id="conditionChoices">
+    <button type="button" data-value="B">B — Baik</button>
+    <button type="button" data-value="R">R — Rusak</button>
+    <button type="button" data-value="RB">RB — Rusak Berat</button>
+  </div>
+  <label>Lokasi Ruangan</label>
+  <div class="choices rooms" id="roomChoices">
+    <button type="button" data-value="Kadin">Kadin</button><button type="button" data-value="Sekretariat">Sekret</button>
+    <button type="button" data-value="Sekretaris">Sekretaris</button><button type="button" data-value="P2K2">P2K2</button>
+    <button type="button" data-value="PHA">PHA</button><button type="button" data-value="PPA">PPA</button>
+    <button type="button" data-value="Rapat">RAPAT</button><button type="button" data-value="Mushola">Mushola</button>
+    <button type="button" data-value="Tamu">TAMU</button><button type="button" data-value="Dapur">DAPUR</button>
+    <button type="button" data-value="Gudang">GUDANG</button><button type="button" data-value="DP3A">DP3A</button>
+    <button type="button" data-value="UPT">UPT</button><button type="button" data-value="RPS">RPS</button>
+  </div>
+  <label for="notes">Tambah Keterangan (opsional)</label>
+  <textarea id="notes" rows="2" placeholder="Keterangan tambahan..."></textarea>
+</div>
+
+<div class="section">
+  <div class="section-title">4. Hasil Inventarisasi</div>
+  <div class="info">
+    <div><b>No Urut Aset:</b> <span id="noUrut">—</span></div>
+    <div><b>No Inven:</b> <span id="noInven">Dibuat saat disimpan</span></div>
+    <div><b>Tgl Inven:</b> <span id="tglInven">Otomatis saat simpan</span></div>
+  </div>
+  <button type="button" class="primary save" id="saveBtn">SIMPAN INVENTARISASI</button>
+  <div id="status" class="status">Halaman siap. Koneksi database akan diaktifkan setelah backend Apps Script disiapkan.</div>
+</div>
+
+<script>
+'use strict';
+// Endpoint Apps Script akan dipasang setelah backend doGet/doPost dan pembatasan akses selesai.
+// Jangan menaruh password atau token rahasia di frontend publik.
+const API_URL = '';
+let allAssets = [], selectedName = '', selectedAsset = null;
+let selectedCondition = '', selectedRoom = '', photoData = '', cameraStream = null;
+const $ = id => document.getElementById(id);
+function showStatus(message, type='') { const el=$('status'); el.textContent=message; el.className='status'+(type?' '+type:''); }
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function stopCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}}
+$('openCamera').addEventListener('click',async()=>{
+ try{
+  if(!window.isSecureContext) throw new Error('Halaman belum menggunakan HTTPS.');
+  if(!navigator.mediaDevices?.getUserMedia) throw new Error('Browser tidak menyediakan akses kamera. Buka melalui HTTPS di browser modern.');
+  stopCamera();
+  showStatus('Meminta izin kamera...');
+  cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+  $('video').srcObject=cameraStream;$('video').classList.remove('hidden');$('cameraBox').classList.add('hidden');$('preview').style.display='none';$('takePhoto').classList.remove('hidden');
+  await $('video').play();showStatus('Kamera aktif. Arahkan ke aset lalu tekan Ambil Foto.');
+ }catch(err){showStatus('Kamera gagal dibuka: '+(err.name==='NotAllowedError'?'Izin kamera ditolak. Periksa izin kamera browser.':err.message),'error');}
+});
+$('takePhoto').addEventListener('click',()=>{
+ const v=$('video'),c=$('canvas');if(!v.videoWidth){showStatus('Kamera belum siap. Tunggu sebentar.','error');return;}
+ const scale=Math.min(1,1280/v.videoWidth);c.width=Math.round(v.videoWidth*scale);c.height=Math.round(v.videoHeight*scale);c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+ photoData=c.toDataURL('image/jpeg',.75);$('preview').src=photoData;$('preview').style.display='block';v.classList.add('hidden');$('takePhoto').classList.add('hidden');$('retakePhoto').classList.remove('hidden');stopCamera();showStatus('Foto siap. Periksa pratinjau sebelum menyimpan.');
+});
+$('retakePhoto').addEventListener('click',()=>{photoData='';$('preview').style.display='none';$('retakePhoto').classList.add('hidden');$('cameraBox').classList.remove('hidden');showStatus('Tekan Buka Kamera untuk mengambil ulang foto.');});
+$('uploadPhoto').addEventListener('click',()=>$('filePhoto').click());
+$('filePhoto').addEventListener('change',e=>{
+ const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){showStatus('Pilih file gambar yang valid.','error');return;}
+ const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,1280/img.width),c=$('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);photoData=c.toDataURL('image/jpeg',.75);$('preview').src=photoData;$('preview').style.display='block';$('video').classList.add('hidden');$('cameraBox').classList.add('hidden');$('retakePhoto').classList.remove('hidden');stopCamera();showStatus('Foto galeri siap.');};img.src=reader.result;};reader.readAsDataURL(f);
+});
+function clearAssetSelection(){selectedName='';selectedAsset=null;$('yearSelect').innerHTML='<option value="">Pilih Tahun</option>';$('yearSelect').disabled=true;$('assetSelect').innerHTML='<option value="">Pilih data aset</option>';$('assetSelect').disabled=true;$('assetInfo').classList.add('hidden');$('noUrut').textContent='—';}
+$('searchName').addEventListener('input',()=>{
+ clearAssetSelection();const q=$('searchName').value.trim().toLocaleLowerCase('id');const box=$('nameResults');box.innerHTML='';
+ if(!q)return;
+ const names=[...new Set(allAssets.filter(a=>String(a.namaBarang||'').toLocaleLowerCase('id').includes(q)).map(a=>a.namaBarang))].slice(0,30);
+ names.forEach(name=>{const d=document.createElement('div');d.className='asset-card';d.textContent=name;d.addEventListener('click',()=>chooseName(name));box.appendChild(d);});
+ if(!names.length) {const d=document.createElement('div');d.className='muted';d.textContent=API_URL?'Nama barang tidak ditemukan.':'Master aset belum tersambung ke backend.';box.appendChild(d);}
+});
+function chooseName(name){
+ selectedName=name;$('searchName').value=name;$('nameResults').innerHTML='';
+ const assets=allAssets.filter(a=>a.namaBarang===name);const years=[...new Set(assets.map(a=>String(a.tahun||'')).filter(Boolean))].sort();
+ $('yearSelect').innerHTML='<option value="">Pilih Tahun</option>';years.forEach(y=>$('yearSelect').add(new Option(y,y)));$('yearSelect').disabled=false;
+ $('assetSelect').innerHTML='<option value="">Pilih data aset</option>';$('assetSelect').disabled=true;$('assetInfo').classList.add('hidden');$('noUrut').textContent='—';
+}
+$('yearSelect').addEventListener('change',()=>{
+ selectedAsset=null;$('assetSelect').innerHTML='<option value="">Pilih data aset</option>';const y=$('yearSelect').value;
+ const matches=allAssets.filter(a=>a.namaBarang===selectedName&&String(a.tahun)===y);
+ matches.forEach(a=>{const idx=allAssets.indexOf(a);$('assetSelect').add(new Option(`${a.nibar||'(NIBAR kosong)'} – ${a.spesifikasi||'Tanpa spesifikasi'} – ${a.nilai||'-'}`,String(idx)));});
+ $('assetSelect').disabled=!y;
+});
+$('assetSelect').addEventListener('change',()=>{
+ const v=$('assetSelect').value;if(v===''){selectedAsset=null;$('assetInfo').classList.add('hidden');$('noUrut').textContent='—';return;}
+ selectedAsset=allAssets[Number(v)];$('noUrut').textContent=selectedAsset.noUrutAset||'—';
+ $('assetInfo').innerHTML='<b>Nama:</b> '+escapeHtml(selectedAsset.namaBarang)+'<br><b>Kode Barang:</b> '+escapeHtml(selectedAsset.kodeBarang)+'<br><b>NIBAR:</b> '+escapeHtml(selectedAsset.nibar)+'<br><b>Spesifikasi:</b> '+escapeHtml(selectedAsset.spesifikasi)+'<br><b>Tahun:</b> '+escapeHtml(selectedAsset.tahun)+'<br><b>Nilai:</b> '+escapeHtml(selectedAsset.nilai);
+ $('assetInfo').classList.remove('hidden');
+});
+function setupChoices(id,setter){$(id).addEventListener('click',e=>{const b=e.target.closest('button[data-value]');if(!b)return;setter(b.dataset.value);[...$(id).querySelectorAll('button')].forEach(x=>x.classList.toggle('active',x===b));});}
+setupChoices('conditionChoices',v=>selectedCondition=v);setupChoices('roomChoices',v=>selectedRoom=v);
+$('saveBtn').addEventListener('click',async()=>{
+ const missing=[];if(!selectedAsset)missing.push('pilih data aset');if(!photoData)missing.push('ambil foto aset');if(!selectedCondition)missing.push('pilih kondisi');if(!selectedRoom)missing.push('pilih lokasi');
+ if(missing.length){showStatus('Belum bisa disimpan: '+missing.join(', ')+'.','error');return;}
+ if(!API_URL){showStatus('Form dan kamera siap, tetapi penyimpanan belum diaktifkan. Backend Apps Script perlu disiapkan dan diamankan sebelum data aset dikirim.','error');return;}
+ const btn=$('saveBtn');btn.disabled=true;btn.textContent='MENYIMPAN...';
+ try{
+  const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({aksi:'simpanInventarisasi',payload:{noUrutAset:selectedAsset.noUrutAset,foto:photoData,kondisi:selectedCondition,lokasi:selectedRoom,keterangan:$('notes').value.trim()}}),redirect:'follow'});
+  const result=await response.json();if(!response.ok||!result.berhasil)throw new Error(result.pesan||'Penyimpanan gagal.');
+  $('noInven').textContent=result.noInven;$('tglInven').textContent=result.tanggal;showStatus('BERHASIL DISIMPAN!\nNo Urut Aset: '+result.noUrutAset+'\nNo Inven: '+result.noInven+'\nTanggal: '+result.tanggal,'success');
+ }catch(err){showStatus('Gagal menyimpan: '+err.message,'error');}
+ finally{btn.disabled=false;btn.textContent='SIMPAN INVENTARISASI';}
+});
+async function loadMaster(){
+ if(!API_URL){showStatus('Tampilan dan kamera siap. Koneksi master aset belum diaktifkan.');return;}
+ try{const r=await fetch(API_URL+'?aksi=ambilDataMaster');const d=await r.json();if(!d.berhasil)throw new Error(d.pesan||'Gagal membaca master');allAssets=d.aset||[];$('masterNotice').textContent='Data master siap: '+allAssets.length+' aset.';showStatus('Data master berhasil dimuat.');}
+ catch(err){showStatus('Gagal memuat master aset: '+err.message,'error');}
+}
+window.addEventListener('beforeunload',stopCamera);
+loadMaster();
+</script>
+</body>
+</html>
