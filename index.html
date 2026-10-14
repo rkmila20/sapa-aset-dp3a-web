@@ -3,38 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#176b43">
+<meta name="theme-color" content="#d85a99">
 <title>SAPA ASET DP3A</title>
 <style>
-:root{--green:#176b43;--green2:#278454;--ink:#20352b;--muted:#637568;--line:#d4e2d7;--bg:#f3f7f4;--pale:#e8f3eb}
+:root{--green:#c34f8b;--green2:#e47db0;--ink:#4c2940;--muted:#866a7b;--line:#f0c9dd;--bg:#fff3f9;--pale:#fde5f0}
 *{box-sizing:border-box}
-body{margin:0 auto;max-width:680px;padding:0 16px 36px;background:var(--bg);color:var(--ink);font:14px/1.5 Arial,sans-serif}
-header{margin:0 -16px 20px;padding:25px 18px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#145c3b,#278454);border-radius:0 0 18px 18px}
+body{margin:0 auto;max-width:680px;padding:0 16px 36px;background:linear-gradient(145deg,#fff0f7 0%,#f8d7eb 48%,#eee0ff 100%);color:var(--ink);font:14px/1.5 Arial,sans-serif;min-height:100vh}
+header{margin:0 -16px 20px;padding:25px 18px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#c43f83,#ec8dbb 58%,#b88be8);border-radius:0 0 22px 22px}
 h1{font-size:24px;letter-spacing:.3px;margin:0 0 3px}.byline{font-size:12px;color:#e3f3e9;margin:0}
 .intro{background:#e2f2e7;border-left:4px solid var(--green2);padding:12px 14px;border-radius:8px;margin-bottom:18px}
-.section{background:#fff;border:1px solid #e0e9e2;border-radius:15px;padding:16px;margin:14px 0;box-shadow:0 2px 8px #183b2808}
-.section-title{font-size:15px;font-weight:700;color:#234d37;margin:0 0 10px}
-label,.label{display:block;font-size:13px;font-weight:700;color:#234d37;margin:14px 0 7px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #cedbd1;border-radius:10px;background:#fff;color:var(--ink);font:14px Arial,sans-serif}
-input:focus,select:focus,textarea:focus{outline:2px solid #27845435;border-color:var(--green2)}
-button{cursor:pointer;border:1px solid #c8d9cd;border-radius:10px;padding:11px 14px;background:#fff;color:#24583a;font-weight:700;font-size:14px}
+.section{background:#fff;border:1px solid #f3d5e5;border-radius:15px;padding:16px;margin:14px 0;box-shadow:0 6px 18px #9d477719}
+.section-title{font-size:15px;font-weight:700;color:#9f376d;margin:0 0 10px}
+label,.label{display:block;font-size:13px;font-weight:700;color:#8f3565;margin:14px 0 7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #e8bfd5;border-radius:10px;background:#fff;color:var(--ink);font:14px Arial,sans-serif}
+input:focus,select:focus,textarea:focus{outline:2px solid #e47db044;border-color:var(--green2)}
+button{cursor:pointer;border:1px solid #e7bfd4;border-radius:10px;padding:11px 14px;background:#fff;color:#913765;font-weight:700;font-size:14px}
 button:disabled{opacity:.55;cursor:not-allowed}
-.primary{background:var(--green);border-color:var(--green);color:#fff}
-.camera-box{min-height:145px;border:2px dashed #9bbca6;border-radius:14px;background:var(--pale);color:#236443;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:16px}
+.primary{background:linear-gradient(135deg,#c44786,#e77db0);border-color:#c44786;color:#fff}
+.camera-box{min-height:145px;border:2px dashed #dc9cbe;border-radius:14px;background:var(--pale);color:#a33f75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:16px}
 .camera-icon{font-size:38px}.camera-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin-top:9px;background:#15251b}
 #preview{display:none}.hidden{display:none!important}.muted{font-size:12px;color:var(--muted)}
-.results{display:grid;gap:7px;margin-top:8px}.asset-card{border:1px solid var(--line);border-radius:9px;padding:11px;background:white;cursor:pointer}.asset-card:hover,.asset-card.chosen{background:#eaf5ed;border-color:var(--green2)}
-.choices{display:flex;flex-wrap:wrap;gap:8px}.choices button.active{background:var(--green);border-color:var(--green);color:#fff}
+.results{display:grid;gap:7px;margin-top:8px}.asset-card{border:1px solid var(--line);border-radius:9px;padding:11px;background:white;cursor:pointer}.asset-card:hover,.asset-card.chosen{background:#fff0f7;border-color:var(--green2)}
+.choices{display:flex;flex-wrap:wrap;gap:8px}.choices button.active{background:linear-gradient(135deg,#c44786,#e77db0);border-color:#c44786;color:#fff}
 .rooms button{flex:1 0 22%;padding:10px 6px;font-size:12px}
-.info{background:#f8fbf8;border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px;line-height:1.9;overflow-wrap:anywhere}
+.info{background:#fff8fc;border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px;line-height:1.9;overflow-wrap:anywhere}
 .save{width:100%;min-height:49px;font-size:15px;margin-top:8px}
-.status{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px;padding:11px;border-radius:9px;background:#edf4ef;color:#234d37}
-.status.error{background:#fff0ed;color:#9c2e20}.status.success{background:#e2f5e8;color:#145c3b}
+.status{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px;padding:11px;border-radius:9px;background:#fff0f7;color:#87335f}
+.status.error{background:#fff0ed;color:#9c2e20}.status.success{background:#f0e2ff;color:#6b358f}
+#loginScreen{max-width:430px;margin:8vh auto 24px;padding:0}
+.login-card{background:rgba(255,255,255,.94);border:1px solid #f2c6dd;border-radius:24px;padding:26px 22px;box-shadow:0 18px 45px #a83f791c}
+.login-logo{width:66px;height:66px;border-radius:20px;background:linear-gradient(135deg,#c44786,#e7a2cb 60%,#b88be8);display:grid;place-items:center;color:white;font-size:28px;margin:0 auto 14px;box-shadow:0 8px 20px #b84e8730}
+.login-title{text-align:center;color:#9d376d;font-size:23px;font-weight:800;margin:0 0 4px}
+.login-sub{text-align:center;color:#866a7b;font-size:13px;margin:0 0 22px}
+.login-card label{margin-top:14px}
+.login-card .primary{width:100%;margin-top:20px;min-height:47px}
+.login-foot{text-align:center;font-size:11px;color:#9b7a8d;margin-top:18px}
+#appShell{display:none}
 @media(max-width:400px){body{padding-left:12px;padding-right:12px}header{margin-left:-12px;margin-right:-12px}.rooms button{flex-basis:27%}}
 </style>
 </head>
 <body>
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">✿</div>
+    <h1 class="login-title">SAPA ASET DP3A</h1>
+    <p class="login-sub">Sistem Administrasi dan Pendataan Aset<br>DP3A Kabupaten Malang</p>
+    <form id="loginForm">
+      <label for="loginUsername">Username</label>
+      <input id="loginUsername" name="username" autocomplete="username" required placeholder="Masukkan username">
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" name="password" type="password" autocomplete="current-password" required placeholder="Masukkan password">
+      <button class="primary" id="loginBtn" type="submit">MASUK</button>
+      <div id="loginStatus" class="status hidden" role="status"></div>
+    </form>
+    <p class="login-foot">By: @RK.Mila 2026</p>
+  </div>
+</div>
+<div id="appShell">
 <header><h1>SAPA ASET DP3A</h1><p class="byline"><i>By: @RK.Mila 2026</i></p></header>
 <div class="intro">Silakan masukkan data inventarisasi aset. Foto dapat diambil langsung melalui kamera atau dipilih dari galeri.</div>
 
@@ -101,15 +127,40 @@ video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border
   <div id="status" class="status">Halaman siap. Koneksi database akan diaktifkan setelah backend Apps Script disiapkan.</div>
 </div>
 
+</div>
 <script>
 'use strict';
 // Endpoint Apps Script akan dipasang setelah backend doGet/doPost dan pembatasan akses selesai.
 // Jangan menaruh password atau token rahasia di frontend publik.
-const API_URL = '';
+const API_URL = ''; // Isi dengan URL Web App Apps Script setelah deployment API siap.
+const SESSION_KEY = 'sapaAsetSession';
+const SESSION_DAY_KEY = 'sapaAsetLoginDay';
+let sessionToken = '';
 let allAssets = [], selectedName = '', selectedAsset = null;
 let selectedCondition = '', selectedRoom = '', photoData = '', cameraStream = null;
 const $ = id => document.getElementById(id);
 function showStatus(message, type='') { const el=$('status'); el.textContent=message; el.className='status'+(type?' '+type:''); }
+
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function showLogin(message=''){ $('loginScreen').style.display='block'; $('appShell').style.display='none'; if(message){$('loginStatus').textContent=message;$('loginStatus').className='status error';} }
+function showApp(){ $('loginScreen').style.display='none'; $('appShell').style.display='block'; }
+function readSession(){try{const s=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');if(s&&s.token&&s.day===todayKey()){sessionToken=s.token;return true;}sessionStorage.removeItem(SESSION_KEY);}catch(e){}return false;}
+async function callApiPost(payload){
+  if(!API_URL) throw new Error('URL API belum dipasang. Backend login belum dapat dihubungkan.');
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});
+  const d=await r.json();if(!r.ok||!d.berhasil)throw new Error(d.pesan||'Permintaan gagal.');return d;
+}
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=$('loginBtn');btn.disabled=true;btn.textContent='MEMERIKSA...';
+  $('loginStatus').className='status hidden';
+  try{
+    const d=await callApiPost({aksi:'login',username:$('loginUsername').value.trim(),password:$('loginPassword').value});
+    sessionToken=d.token;sessionStorage.setItem(SESSION_KEY,JSON.stringify({token:sessionToken,day:todayKey()}));
+    showApp();loadMaster();
+  }catch(err){$('loginStatus').textContent=err.message;$('loginStatus').className='status error';}
+  finally{btn.disabled=false;btn.textContent='MASUK';}
+});
 function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function stopCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}}
 $('openCamera').addEventListener('click',async()=>{
@@ -168,7 +219,7 @@ $('saveBtn').addEventListener('click',async()=>{
  if(!API_URL){showStatus('Form dan kamera siap, tetapi penyimpanan belum diaktifkan. Backend Apps Script perlu disiapkan dan diamankan sebelum data aset dikirim.','error');return;}
  const btn=$('saveBtn');btn.disabled=true;btn.textContent='MENYIMPAN...';
  try{
-  const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({aksi:'simpanInventarisasi',payload:{noUrutAset:selectedAsset.noUrutAset,foto:photoData,kondisi:selectedCondition,lokasi:selectedRoom,keterangan:$('notes').value.trim()}}),redirect:'follow'});
+  const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({aksi:'simpanInventarisasi',token:sessionToken,payload:{noUrutAset:selectedAsset.noUrutAset,foto:photoData,kondisi:selectedCondition,lokasi:selectedRoom,keterangan:$('notes').value.trim()}}),redirect:'follow'});
   const result=await response.json();if(!response.ok||!result.berhasil)throw new Error(result.pesan||'Penyimpanan gagal.');
   $('noInven').textContent=result.noInven;$('tglInven').textContent=result.tanggal;showStatus('BERHASIL DISIMPAN!\nNo Urut Aset: '+result.noUrutAset+'\nNo Inven: '+result.noInven+'\nTanggal: '+result.tanggal,'success');
  }catch(err){showStatus('Gagal menyimpan: '+err.message,'error');}
@@ -176,11 +227,11 @@ $('saveBtn').addEventListener('click',async()=>{
 });
 async function loadMaster(){
  if(!API_URL){showStatus('Tampilan dan kamera siap. Koneksi master aset belum diaktifkan.');return;}
- try{const r=await fetch(API_URL+'?aksi=ambilDataMaster');const d=await r.json();if(!d.berhasil)throw new Error(d.pesan||'Gagal membaca master');allAssets=d.aset||[];$('masterNotice').textContent='Data master siap: '+allAssets.length+' aset.';showStatus('Data master berhasil dimuat.');}
+ try{const r=await fetch(API_URL+'?aksi=ambilDataMaster&token='+encodeURIComponent(sessionToken));const d=await r.json();if(!d.berhasil)throw new Error(d.pesan||'Gagal membaca master');allAssets=d.aset||[];$('masterNotice').textContent='Data master siap: '+allAssets.length+' aset.';showStatus('Data master berhasil dimuat.');}
  catch(err){showStatus('Gagal memuat master aset: '+err.message,'error');}
 }
 window.addEventListener('beforeunload',stopCamera);
-loadMaster();
+if(readSession()){showApp();loadMaster();}else{showLogin();}
 </script>
 </body>
 </html>
