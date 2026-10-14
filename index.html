@@ -25,6 +25,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin-top:9px;background:#15251b}
 #preview{display:none}.hidden{display:none!important}.muted{font-size:12px;color:var(--muted)}
 .results{display:grid;gap:7px;margin-top:8px}.asset-card{border:1px solid var(--line);border-radius:9px;padding:11px;background:white;cursor:pointer}.asset-card:hover,.asset-card.chosen{background:#fff0f7;border-color:var(--green2)}
+.asset-option-done{font-weight:700}
 .choices{display:flex;flex-wrap:wrap;gap:8px}.choices button.active{background:linear-gradient(135deg,#c44786,#e77db0);border-color:#c44786;color:#fff}
 .rooms button{flex:1 0 22%;padding:10px 6px;font-size:12px}
 .info{background:#fff8fc;border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:12px;line-height:1.9;overflow-wrap:anywhere}
@@ -130,6 +131,9 @@ video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border
     <div><b>Tgl Inven:</b> <span id="tglInven">Otomatis saat simpan</span></div>
   </div>
   <button type="button" class="primary save" id="saveBtn">SIMPAN INVENTARISASI</button>
+  <button type="button" class="primary save hidden" id="nextFormBtn">
+  🔀 Lanjut Yuk
+</button>
   <div id="status" class="status">Halaman siap. Koneksi database akan diaktifkan setelah backend Apps Script disiapkan.</div>
 </div>
 
@@ -216,7 +220,14 @@ function chooseName(name){
 $('yearSelect').addEventListener('change',()=>{
  selectedAsset=null;$('assetSelect').innerHTML='<option value="">Pilih data aset</option>';const y=$('yearSelect').value;
  const matches=allAssets.filter(a=>a.namaBarang===selectedName&&String(a.tahun)===y);
- matches.forEach(a=>{const idx=allAssets.indexOf(a);$('assetSelect').add(new Option(`${a.nibar||'(NIBAR kosong)'} – ${a.spesifikasi||'Tanpa spesifikasi'} – ${a.nilai||'-'}`,String(idx)));});
+ matches.forEach(a=>{
+    const idx=allAssets.indexOf(a);
+    const tanda = a.sudahDiinventarisasi ? '✅ ' : '';
+    const label = `${tanda}${a.nibar||'(NIBAR kosong)'} – ${a.spesifikasi||'Tanpa spesifikasi'} – ${a.nilai||'-'}`;
+    const option = new Option(label, String(idx));
+    if (a.sudahDiinventarisasi) option.className = 'asset-option-done';
+    $('assetSelect').add(option);
+  });
  $('assetSelect').disabled=!y;
 });
 $('assetSelect').addEventListener('change',()=>{
@@ -235,10 +246,53 @@ $('saveBtn').addEventListener('click',async()=>{
  try{
   const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({aksi:'simpanInventarisasi',token:sessionToken,payload:{noUrutAset:selectedAsset.noUrutAset,foto:photoData,kondisi:selectedCondition,lokasi:selectedRoom,keterangan:$('notes').value.trim()}}),redirect:'follow'});
   const result=await response.json();if(!response.ok||!result.berhasil)throw new Error(result.pesan||'Penyimpanan gagal.');
-  $('noInven').textContent=result.noInven;$('tglInven').textContent=result.tanggal;showStatus('BERHASIL DISIMPAN!\nNo Urut Aset: '+result.noUrutAset+'\nNo Inven: '+result.noInven+'\nTanggal: '+result.tanggal,'success');
+  $('noInven').textContent=result.noInven;
+   $('tglInven').textContent=result.tanggal;
+   $('nextFormBtn').classList.remove('hidden');
+   $('saveBtn').classList.add('hidden');
+   showStatus('BERHASIL DISIMPAN!\nNo Urut Aset: '+result.noUrutAset+'\nNo Inven: '+result.noInven+'\nTanggal: '+result.tanggal,'success');
+   if (selectedAsset) selectedAsset.sudahDiinventarisasi = true;
+   loadMaster();
  }catch(err){showStatus('Gagal menyimpan: '+err.message,'error');}
  finally{btn.disabled=false;btn.textContent='SIMPAN INVENTARISASI';}
 });
+$('nextFormBtn').addEventListener('click', () => {
+  photoData = '';
+  selectedName = '';
+  selectedAsset = null;
+  selectedCondition = '';
+  selectedRoom = '';
+  stopCamera();
+
+  $('searchName').value = '';
+  $('nameResults').innerHTML = '';
+  $('yearSelect').innerHTML = '<option value="">Pilih Tahun</option>';
+  $('yearSelect').disabled = true;
+  $('assetSelect').innerHTML = '<option value="">Pilih data aset</option>';
+  $('assetSelect').disabled = true;
+  $('assetInfo').classList.add('hidden');
+  $('noUrut').textContent = '—';
+  $('noInven').textContent = 'Dibuat saat disimpan';
+  $('tglInven').textContent = 'Otomatis saat simpan';
+  $('notes').value = '';
+
+  $('conditionChoices').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  $('roomChoices').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+
+  $('preview').removeAttribute('src');
+  $('preview').style.display = 'none';
+  $('video').classList.add('hidden');
+  $('cameraBox').classList.remove('hidden');
+  $('takePhoto').classList.add('hidden');
+  $('retakePhoto').classList.add('hidden');
+  $('filePhoto').value = '';
+
+  $('nextFormBtn').classList.add('hidden');
+  $('saveBtn').classList.remove('hidden');
+  showStatus('Form baru siap. Silakan pilih aset berikutnya.');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 async function loadMaster(){
  if(!API_URL){showStatus('Tampilan dan kamera siap. Koneksi master aset belum diaktifkan.');return;}
  try{const r=await fetch(API_URL+'?aksi=ambilDataMaster&token='+encodeURIComponent(sessionToken));const d=await r.json();if(!d.berhasil)throw new Error(d.pesan||'Gagal membaca master');allAssets=d.aset||[];$('masterNotice').textContent='Data master siap: '+allAssets.length+' aset.';showStatus('Data master berhasil dimuat.');}
