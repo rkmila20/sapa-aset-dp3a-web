@@ -38,6 +38,9 @@ video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border
 .login-sub{text-align:center;color:#866a7b;font-size:13px;margin:0 0 22px}
 .login-card label{margin-top:14px}
 .login-card .primary{width:100%;margin-top:20px;min-height:47px}
+.password-wrap{display:flex;gap:8px;align-items:stretch}
+.password-wrap input{flex:1;min-width:0}
+.password-toggle{margin-top:0!important;min-width:88px;padding:8px 12px!important;border-color:#e7a2cb!important;color:#9d376d!important;background:#fff!important;font-size:13px!important}
 .login-foot{text-align:center;font-size:11px;color:#9b7a8d;margin-top:18px}
 #appShell{display:none}
 @media(max-width:400px){body{padding-left:12px;padding-right:12px}header{margin-left:-12px;margin-right:-12px}.rooms button{flex-basis:27%}}
@@ -53,7 +56,10 @@ video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border
       <label for="loginUsername">Username</label>
       <input id="loginUsername" name="username" autocomplete="username" required placeholder="Masukkan username">
       <label for="loginPassword">Password</label>
-      <input id="loginPassword" name="password" type="password" autocomplete="current-password" required placeholder="Masukkan password">
+      <div class="password-wrap">
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" required placeholder="Masukkan password">
+        <button class="password-toggle" id="togglePassword" type="button" aria-controls="loginPassword" aria-pressed="false">Lihat</button>
+      </div>
       <button class="primary" id="loginBtn" type="submit">MASUK</button>
       <div id="loginStatus" class="status hidden" role="status"></div>
     </form>
@@ -130,9 +136,9 @@ video,#preview{display:block;width:100%;max-height:340px;object-fit:cover;border
 </div>
 <script>
 'use strict';
-// Endpoint Apps Script akan dipasang setelah backend doGet/doPost dan pembatasan akses selesai.
+// URL endpoint Apps Script untuk API SAPA ASET DP3A.
 // Jangan menaruh password atau token rahasia di frontend publik.
-const API_URL = ''; // Isi dengan URL Web App Apps Script setelah deployment API siap.
+const API_URL = 'https://script.google.com/macros/s/AKfycbyMpKr-7JnQV9pUgsF9WtO3MTyAvZ42gWV75OxS7o1vj64ivKnI37WQKvr-LtnlLPQ/exec';
 const SESSION_KEY = 'sapaAsetSession';
 const SESSION_DAY_KEY = 'sapaAsetLoginDay';
 let sessionToken = '';
@@ -150,6 +156,14 @@ async function callApiPost(payload){
   const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});
   const d=await r.json();if(!r.ok||!d.berhasil)throw new Error(d.pesan||'Permintaan gagal.');return d;
 }
+$('togglePassword').addEventListener('click',()=>{
+  const field=$('loginPassword');
+  const visible=field.type==='password';
+  field.type=visible?'text':'password';
+  $('togglePassword').textContent=visible?'Sembunyikan':'Lihat';
+  $('togglePassword').setAttribute('aria-pressed',String(visible));
+  field.focus();
+});
 $('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const btn=$('loginBtn');btn.disabled=true;btn.textContent='MEMERIKSA...';
